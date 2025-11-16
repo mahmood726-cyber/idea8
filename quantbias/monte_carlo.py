@@ -181,9 +181,10 @@ class MonteCarloAnalysis:
 
         # Create temporary bias parameter with sampled values
         temp_bias = SelectionBias(
-            sensitivity=params['sensitivity'][0],
-            specificity=params['specificity'][0],
-            selection_probability=bias_param.selection_probability
+            s11=params['s11'][0],
+            s10=params['s10'][0],
+            s01=params['s01'][0],
+            s00=params['s00'][0]
         )
 
         return temp_bias.apply_bias(rr)
@@ -216,45 +217,43 @@ class MonteCarloAnalysis:
         """Apply sampled confounding correction."""
         params = bias_param.sample_parameters(n=1, random_state=self.random_state + iteration)
 
-        # Calculate prevalence in exposed
+        # Get sampled parameters
         p0 = params['prevalence_confounder_unexposed'][0]
-        rr_ce = params['rr_confounder_exposure'][0]
-        p1 = min(p0 * rr_ce / (1 - p0 + p0 * rr_ce), 0.99)
+        p1 = params['prevalence_confounder_exposed'][0]
+        rr_cd0 = params['rr_confounder_outcome_unexposed'][0]
+        rr_cd1 = params['rr_confounder_outcome_exposed'][0]
 
         temp_bias = Confounding(
-            rr_confounder_exposure=rr_ce,
-            rr_confounder_outcome=params['rr_confounder_outcome'][0],
+            rr_confounder_outcome_unexposed=rr_cd0,
+            rr_confounder_outcome_exposed=rr_cd1,
             prevalence_confounder_unexposed=p0,
-            prevalence_confounder_exposed=p1
+            prevalence_confounder_exposed=p1,
+            rr_confounder_exposure=bias_param.rr_confounder_exposure
         )
 
         return temp_bias.apply_bias(rr)
 
-    def get_distribution_summary(self) -> pd.DataFrame:
+    def get_distribution_summary(self) -> Dict[str, float]:
         """
         Get summary statistics of adjusted RR distribution.
 
         Returns
         -------
-        pd.DataFrame
-            Distribution summary
+        dict
+            Distribution summary with keys: mean, median, std, ci_lower, ci_upper
         """
         if self.results is None:
             raise ValueError("Must run simulation first using .run()")
 
         summary_stats = {
-            'Statistic': ['Mean', 'Median', 'SD', 'IQR', '2.5th %ile', '97.5th %ile'],
-            'Value': [
-                self.results.mean,
-                self.results.median,
-                np.std(self.results.adjusted_rr_samples),
-                self.results.percentiles[75] - self.results.percentiles[25],
-                self.results.ci_lower,
-                self.results.ci_upper
-            ]
+            'mean': self.results.mean,
+            'median': self.results.median,
+            'std': np.std(self.results.adjusted_rr_samples),
+            'ci_lower': self.results.ci_lower,
+            'ci_upper': self.results.ci_upper
         }
 
-        return pd.DataFrame(summary_stats)
+        return summary_stats
 
     def probability_below_threshold(self, threshold: float = 1.0) -> float:
         """
@@ -290,6 +289,38 @@ class MonteCarloAnalysis:
             Probability
         """
         return 1 - self.probability_below_threshold(threshold)
+
+    def probability_rr_greater_than(self, threshold: float) -> float:
+        """
+        Calculate probability that adjusted RR is greater than threshold.
+
+        Parameters
+        ----------
+        threshold : float
+            Threshold value
+
+        Returns
+        -------
+        float
+            Probability
+        """
+        return self.probability_above_threshold(threshold)
+
+    def probability_rr_less_than(self, threshold: float) -> float:
+        """
+        Calculate probability that adjusted RR is less than threshold.
+
+        Parameters
+        ----------
+        threshold : float
+            Threshold value
+
+        Returns
+        -------
+        float
+            Probability
+        """
+        return self.probability_below_threshold(threshold)
 
     def get_samples(self) -> np.ndarray:
         """
