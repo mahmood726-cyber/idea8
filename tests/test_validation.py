@@ -11,7 +11,7 @@ Tests bias analysis implementations against worked examples from:
 import pytest
 import numpy as np
 from quantbias import EValue, calculate_evalue
-from quantbias.bias_parameters_corrected import SelectionBias, MeasurementError, Confounding
+from quantbias.bias_parameters import SelectionBias, MeasurementError, Confounding
 
 
 class TestEValueValidation:

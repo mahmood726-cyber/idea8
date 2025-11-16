@@ -1,0 +1,114 @@
+============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.1, pluggy-1.6.0 -- /usr/local/bin/python
+cachedir: .pytest_cache
+rootdir: /home/user/idea8
+configfile: pyproject.toml
+plugins: cov-7.0.0
+collecting ... collected 20 items
+
+tests/test_validation.py::TestEValueValidation::test_vanderweele_example_1 FAILED [  5%]
+tests/test_validation.py::TestEValueValidation::test_vanderweele_example_2 PASSED [ 10%]
+tests/test_validation.py::TestEValueValidation::test_vanderweele_protective_effect PASSED [ 15%]
+tests/test_validation.py::TestEValueValidation::test_vanderweele_formula_verification FAILED [ 20%]
+tests/test_validation.py::TestEValueValidation::test_odds_ratio_conversion PASSED [ 25%]
+tests/test_validation.py::TestLashValidation::test_lash_selection_bias_example FAILED [ 30%]
+tests/test_validation.py::TestLashValidation::test_lash_misclassification_example FAILED [ 35%]
+tests/test_validation.py::TestLashValidation::test_lash_confounding_example FAILED [ 40%]
+tests/test_validation.py::TestGreenlandValidation::test_greenland_nondifferential_misclassification PASSED [ 45%]
+tests/test_validation.py::TestGreenlandValidation::test_greenland_matrix_method FAILED [ 50%]
+tests/test_validation.py::TestRPackageComparison::test_evalue_package_comparison FAILED [ 55%]
+tests/test_validation.py::TestRPackageComparison::test_episensr_selection_comparison PASSED [ 60%]
+tests/test_validation.py::TestRPackageComparison::test_full_r_comparison SKIPPED [ 65%]
+tests/test_validation.py::TestMathematicalProperties::test_evalue_monotonicity PASSED [ 70%]
+tests/test_validation.py::TestMathematicalProperties::test_evalue_symmetry PASSED [ 75%]
+tests/test_validation.py::TestMathematicalProperties::test_bias_correction_null PASSED [ 80%]
+tests/test_validation.py::TestMathematicalProperties::test_misclassification_toward_null PASSED [ 85%]
+tests/test_validation.py::TestEdgeCases::test_rr_near_null FAILED        [ 90%]
+tests/test_validation.py::TestEdgeCases::test_extreme_rr PASSED          [ 95%]
+tests/test_validation.py::TestEdgeCases::test_zero_cells_handling PASSED [100%]
+
+=================================== FAILURES ===================================
+E   AssertionError: assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(2.3660254037844384), 2.54, atol=0.01)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+     +    and   np.float64(2.3660254037844384) = EValueResult(point_estimate=np.float64(3.414213562373095), ci_lower=np.float64(2.3660254037844384), observed_effect=2.0, observed_ci=(1.5, 2.7), effect_measure='RR').ci_lower
+/home/user/idea8/tests/test_validation.py:46: AssertionError: assert np.False_
+E   AssertionError: RR=1.5: Expected E-value=2.18, got 2.3660254037844384
+    assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(2.3660254037844384), 2.18, atol=0.01)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+/home/user/idea8/tests/test_validation.py:98: AssertionError: RR=1.5: Expected E-value=2.18, got 2.3660254037844384
+E   AssertionError: Expected 1.07, got 0.8571428571428572
+    assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(0.8571428571428572, 1.07, atol=0.05)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+/home/user/idea8/tests/test_validation.py:154: AssertionError: Expected 1.07, got 0.8571428571428572
+E   AssertionError: Expected 1.67, got 1e-06
+    assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(1e-06, 1.67, atol=0.1)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+/home/user/idea8/tests/test_validation.py:192: AssertionError: Expected 1.67, got 1e-06
+E   AssertionError: Expected 1.25, got 1.3749999999999998
+    assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(1.3749999999999998, 1.25, atol=0.05)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+/home/user/idea8/tests/test_validation.py:222: AssertionError: Expected 1.25, got 1.3749999999999998
+E   quantbias.utils.exceptions.InvalidParameterError: risk ratio must be positive, got 0
+/home/user/idea8/quantbias/utils/helpers.py:26: quantbias.utils.exceptions.InvalidParameterError: risk ratio must be positive, got 0
+E   AssertionError: assert np.False_
+     +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(4.436491673103708), 3.89, atol=0.01)
+     +    where <function isclose at 0x7eb7451188b0> = np.isclose
+     +    and   np.float64(4.436491673103708) = EValueResult(point_estimate=np.float64(4.436491673103708), ci_lower=np.float64(3.0), observed_effect=2.5, observed_ci=(1.8, 3.5), effect_measure='RR').point_estimate
+/home/user/idea8/tests/test_validation.py:345: AssertionError: assert np.False_
+E   assert np.float64(1.0101004999875) < 1.01
+/home/user/idea8/tests/test_validation.py:444: assert np.float64(1.0101004999875) < 1.01
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.11.14-final-0 _______________
+
+Name                                  Stmts   Miss  Cover   Missing
+-------------------------------------------------------------------
+quantbias/__init__.py                    11      0   100%
+quantbias/bias_correction.py            110     84    24%   47, 86-93, 112-117, 125-148, 163-184, 210-230, 244-253, 272-318
+quantbias/bias_parameters.py            211     72    66%   142-145, 171-192, 197-205, 278-281, 374-382, 417-423, 429-456, 506, 511-520, 585-614
+quantbias/evalues.py                     72     26    64%   41, 93, 124-133, 154-155, 196-201, 223-226, 261-274
+quantbias/evalues_extended.py            79     53    33%   56, 100-132, 171-185, 232-258, 298-337, 377-418, 448, 477
+quantbias/inference.py                  101     74    27%   60, 128-162, 216-234, 292-347, 389-394, 423-442
+quantbias/monte_carlo.py                106     71    33%   54, 96-104, 120-170, 180-189, 198-208, 217-231, 242-257, 273-276, 292, 303-306, 334-337, 348, 359-364, 389-396, 407-431
+quantbias/sensitivity.py                107     83    22%   65-70, 101-122, 156-195, 223-243, 284-295, 324-351, 379-432, 451-471
+quantbias/utils/__init__.py               4      0   100%
+quantbias/utils/constants.py             23      0   100%
+quantbias/utils/exceptions.py            10      0   100%
+quantbias/utils/helpers.py               56     29    48%   46, 66, 96, 101, 107, 165-181, 208-212, 239-247, 272, 301-309
+quantbias/visualization/__init__.py       2      2     0%   3-12
+quantbias/visualization/plots.py        150    150     0%   11-487
+-------------------------------------------------------------------
+TOTAL                                  1042    644    38%
+Coverage HTML written to dir htmlcov
+=========================== short test summary info ============================
+FAILED tests/test_validation.py::TestEValueValidation::test_vanderweele_example_1 - AssertionError: assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(2.3660254037844384), 2.54, atol=0.01)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+ +    and   np.float64(2.3660254037844384) = EValueResult(point_estimate=np.float64(3.414213562373095), ci_lower=np.float64(2.3660254037844384), observed_effect=2.0, observed_ci=(1.5, 2.7), effect_measure='RR').ci_lower
+FAILED tests/test_validation.py::TestEValueValidation::test_vanderweele_formula_verification - AssertionError: RR=1.5: Expected E-value=2.18, got 2.3660254037844384
+assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(2.3660254037844384), 2.18, atol=0.01)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+FAILED tests/test_validation.py::TestLashValidation::test_lash_selection_bias_example - AssertionError: Expected 1.07, got 0.8571428571428572
+assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(0.8571428571428572, 1.07, atol=0.05)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+FAILED tests/test_validation.py::TestLashValidation::test_lash_misclassification_example - AssertionError: Expected 1.67, got 1e-06
+assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(1e-06, 1.67, atol=0.1)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+FAILED tests/test_validation.py::TestLashValidation::test_lash_confounding_example - AssertionError: Expected 1.25, got 1.3749999999999998
+assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(1.3749999999999998, 1.25, atol=0.05)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+FAILED tests/test_validation.py::TestGreenlandValidation::test_greenland_matrix_method - quantbias.utils.exceptions.InvalidParameterError: risk ratio must be positive, got 0
+FAILED tests/test_validation.py::TestRPackageComparison::test_evalue_package_comparison - AssertionError: assert np.False_
+ +  where np.False_ = <function isclose at 0x7eb7451188b0>(np.float64(4.436491673103708), 3.89, atol=0.01)
+ +    where <function isclose at 0x7eb7451188b0> = np.isclose
+ +    and   np.float64(4.436491673103708) = EValueResult(point_estimate=np.float64(4.436491673103708), ci_lower=np.float64(3.0), observed_effect=2.5, observed_ci=(1.8, 3.5), effect_measure='RR').point_estimate
+FAILED tests/test_validation.py::TestEdgeCases::test_rr_near_null - assert np.float64(1.0101004999875) < 1.01
+=================== 8 failed, 11 passed, 1 skipped in 3.45s ====================

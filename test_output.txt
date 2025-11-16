@@ -1,0 +1,5 @@
+ERROR: usage: __main__.py [options] [file_or_dir] [file_or_dir] [...]
+__main__.py: error: unrecognized arguments: --cov=quantbias --cov-report=html --cov-report=term-missing
+  inifile: /home/user/idea8/pyproject.toml
+  rootdir: /home/user/idea8
+
