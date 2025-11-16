@@ -16,19 +16,23 @@ class TestSelectionBias:
     def test_selection_bias_initialization(self):
         """Test initialization of selection bias."""
         bias = SelectionBias(
-            sensitivity=0.8,
-            specificity=0.9,
-            selection_probability=0.6
+            s11=0.8,
+            s10=0.9,
+            s01=0.7,
+            s00=0.6
         )
-        assert bias.sensitivity == 0.8
-        assert bias.specificity == 0.9
+        assert bias.s11 == 0.8
+        assert bias.s10 == 0.9
+        assert bias.s01 == 0.7
+        assert bias.s00 == 0.6
 
     def test_selection_bias_apply(self):
         """Test applying selection bias correction."""
         bias = SelectionBias(
-            sensitivity=0.8,
-            specificity=0.8,
-            selection_probability=0.5
+            s11=0.8,
+            s10=0.8,
+            s01=0.7,
+            s00=0.5
         )
         observed_rr = 2.0
         corrected_rr = bias.apply_bias(observed_rr)
@@ -41,34 +45,37 @@ class TestSelectionBias:
         """Test validation of selection bias parameters."""
         with pytest.raises(InvalidParameterError):
             SelectionBias(
-                sensitivity=1.5,  # Invalid: > 1
-                specificity=0.9,
-                selection_probability=0.6
+                s11=1.5,  # Invalid: > 1
+                s10=0.9,
+                s01=0.7,
+                s00=0.6
             )
 
         with pytest.raises(InvalidParameterError):
             SelectionBias(
-                sensitivity=0.8,
-                specificity=-0.1,  # Invalid: < 0
-                selection_probability=0.6
+                s11=0.8,
+                s10=-0.1,  # Invalid: < 0
+                s01=0.7,
+                s00=0.6
             )
 
     def test_selection_bias_sampling(self):
         """Test parameter sampling for Monte Carlo."""
         bias = SelectionBias(
-            sensitivity=0.8,
-            specificity=0.9,
-            selection_probability=0.6,
-            sensitivity_distribution=('beta', {'a': 8, 'b': 2}),
-            specificity_distribution=('beta', {'a': 9, 'b': 1})
+            s11=0.8,
+            s10=0.9,
+            s01=0.7,
+            s00=0.6,
+            s11_distribution=('beta', {'a': 8, 'b': 2}),
+            s10_distribution=('beta', {'a': 9, 'b': 1})
         )
 
         samples = bias.sample_parameters(n=100, random_state=42)
 
-        assert 'sensitivity' in samples
-        assert 'specificity' in samples
-        assert len(samples['sensitivity']) == 100
-        assert all(0 <= s <= 1 for s in samples['sensitivity'])
+        assert 's11' in samples
+        assert 's10' in samples
+        assert len(samples['s11']) == 100
+        assert all(0 <= s <= 1 for s in samples['s11'])
 
 
 class TestMeasurementError:
@@ -132,20 +139,20 @@ class TestConfounding:
     def test_confounding_initialization(self):
         """Test initialization of confounding bias."""
         bias = Confounding(
-            rr_confounder_exposure=2.0,
-            rr_confounder_outcome=2.0,
-            prevalence_confounder_unexposed=0.3
+            rr_confounder_outcome_unexposed=2.0,
+            prevalence_confounder_unexposed=0.3,
+            rr_confounder_exposure=2.0
         )
         assert bias.rr_confounder_exposure == 2.0
-        assert bias.rr_confounder_outcome == 2.0
+        assert bias.rr_confounder_outcome_unexposed == 2.0
         assert bias.prevalence_confounder_unexposed == 0.3
 
     def test_confounding_apply(self):
         """Test applying confounding correction."""
         bias = Confounding(
-            rr_confounder_exposure=2.0,
-            rr_confounder_outcome=2.0,
-            prevalence_confounder_unexposed=0.3
+            rr_confounder_outcome_unexposed=2.0,
+            prevalence_confounder_unexposed=0.3,
+            rr_confounder_exposure=2.0
         )
         observed_rr = 2.5
         corrected_rr = bias.apply_bias(observed_rr)
@@ -158,39 +165,39 @@ class TestConfounding:
         """Test validation of confounding parameters."""
         with pytest.raises(InvalidParameterError):
             Confounding(
+                rr_confounder_outcome_unexposed=2.0,
                 rr_confounder_exposure=-1.0,  # Invalid
-                rr_confounder_outcome=2.0,
                 prevalence_confounder_unexposed=0.3
             )
 
         with pytest.raises(InvalidParameterError):
             Confounding(
+                rr_confounder_outcome_unexposed=2.0,
                 rr_confounder_exposure=2.0,
-                rr_confounder_outcome=2.0,
                 prevalence_confounder_unexposed=1.5  # Invalid: > 1
             )
 
     def test_confounding_sampling(self):
         """Test parameter sampling."""
         bias = Confounding(
-            rr_confounder_exposure=2.0,
-            rr_confounder_outcome=2.0,
+            rr_confounder_outcome_unexposed=2.0,
             prevalence_confounder_unexposed=0.3,
-            rr_conf_exp_dist=('lognormal', {'mean': np.log(2.0), 'sigma': 0.2}),
+            rr_confounder_exposure=2.0,
+            rr_conf_out_unexp_dist=('lognormal', {'mean': np.log(2.0), 'sigma': 0.2}),
         )
 
         samples = bias.sample_parameters(n=100, random_state=42)
 
-        assert 'rr_confounder_exposure' in samples
-        assert len(samples['rr_confounder_exposure']) == 100
-        assert all(rr > 0 for rr in samples['rr_confounder_exposure'])
+        assert 'rr_confounder_outcome_unexposed' in samples
+        assert len(samples['rr_confounder_outcome_unexposed']) == 100
+        assert all(rr > 0 for rr in samples['rr_confounder_outcome_unexposed'])
 
     def test_confounding_prevalence_calculation(self):
         """Test automatic prevalence calculation."""
         bias = Confounding(
-            rr_confounder_exposure=2.0,
-            rr_confounder_outcome=2.0,
+            rr_confounder_outcome_unexposed=2.0,
             prevalence_confounder_unexposed=0.3,
+            rr_confounder_exposure=2.0,
             prevalence_confounder_exposed=None  # Should be calculated
         )
 

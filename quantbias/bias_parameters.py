@@ -350,8 +350,11 @@ class MeasurementError(BiasParameter):
                 [1 - se_out, sp_out]
             ])
 
-            # Observed table
-            observed = np.array([[a, c], [b, d]])
+            # Observed table: rows = exposure status, columns = outcome status
+            #       D+  D-
+            # E+    a   b
+            # E-    c   d
+            observed = np.array([[a, b], [c, d]])
 
             # Solve for true counts: True = A_exp^-1 * Observed * A_out^-1
             try:
@@ -359,9 +362,9 @@ class MeasurementError(BiasParameter):
                 A_out_inv = np.linalg.inv(A_out)
                 true_table = A_exp_inv @ observed @ A_out_inv.T
 
-                # Extract corrected cells
-                a_true, c_true = true_table[0, :]
-                b_true, d_true = true_table[1, :]
+                # Extract corrected cells (rows=exposure, cols=outcome)
+                a_true, b_true = true_table[0, :]
+                c_true, d_true = true_table[1, :]
 
                 # Calculate corrected RR
                 r1_true = a_true / (a_true + b_true)

@@ -83,13 +83,14 @@ class EValue:
 
         For RR < 1, the formula uses 1/RR.
         """
+        # Validate first to catch invalid values
+        validate_rr(rr, "risk ratio")
+
         # Handle protective effects (RR < 1)
         if rr < 1:
             rr = 1 / rr
 
-        validate_rr(rr, "risk ratio")
-
-        if rr < 1:
+        if rr <= 1:
             return 1.0  # No unmeasured confounding needed to explain null effect
 
         evalue = rr + np.sqrt(rr * (rr - 1))
